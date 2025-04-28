@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "MurielCharacter.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class KENSS_API AMurielCharacter : public ACharacter
@@ -18,6 +22,18 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputMappingContext* MurielContext;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* MovementAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* LookAction;
 
 public:	
 	// Called every frame
