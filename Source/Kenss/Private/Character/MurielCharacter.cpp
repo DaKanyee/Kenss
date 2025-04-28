@@ -87,6 +87,8 @@ void AMurielCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     {
         EnhancedInputcomponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AMurielCharacter::Move);
         EnhancedInputcomponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMurielCharacter::Look);
+
+        PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
     }
 
 }
