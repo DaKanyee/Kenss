@@ -7,6 +7,9 @@
 #include "InputActionValue.h"
 #include "MurielCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 class UInputMappingContext;
 class UInputAction;
 
@@ -41,5 +44,14 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* ViewCamera;
+
 
 };

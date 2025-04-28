@@ -7,11 +7,30 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 AMurielCharacter::AMurielCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+    bUseControllerRotationPitch = false;
+    bUseControllerRotationYaw = false;
+    bUseControllerRotationRoll = false;
+
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->RotationRate = FRotator(0.f, 350.f, 0.f);
+
+    CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+    CameraBoom->SetupAttachment(GetRootComponent());
+    CameraBoom->TargetArmLength = 300.f;
+
+    ViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ViewCamera"));
+    ViewCamera->SetupAttachment(CameraBoom);
 
 }
 
