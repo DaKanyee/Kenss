@@ -12,6 +12,9 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Item/Item.h"
+#include "Item/Weapons/Weapon.h"
+
 // Sets default values
 AMurielCharacter::AMurielCharacter()
 {
@@ -71,6 +74,18 @@ void AMurielCharacter::Look(const FInputActionValue& Value)
     AddControllerYawInput(LookAxisvector.X);
 }
 
+void AMurielCharacter::EKeyPressed()
+{
+    AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+    if (OverlappingWeapon)
+    {
+        OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+
+    }
+
+}
+
+
 // Called every frame
 void AMurielCharacter::Tick(float DeltaTime)
 {
@@ -89,6 +104,7 @@ void AMurielCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         EnhancedInputcomponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMurielCharacter::Look);
 
         PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
+        PlayerInputComponent->BindAction(FName("Equip"), IE_Pressed, this, &AMurielCharacter::EKeyPressed);
     }
 
 }

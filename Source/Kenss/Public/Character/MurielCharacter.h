@@ -13,6 +13,8 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 
+class AItem;
+
 UCLASS()
 class KENSS_API AMurielCharacter : public ACharacter
 {
@@ -28,6 +30,9 @@ protected:
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+
+	void EKeyPressed();
+
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* MurielContext;
@@ -52,6 +57,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* ViewCamera;
+
+	UPROPERTY(VisibleInstanceOnly)
+	AItem* OverlappingItem;
+
+public:
+	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 
 
 };

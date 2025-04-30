@@ -4,6 +4,7 @@
 #include "Item/Item.h"
 #include "Kenss/DebugSachen.h"
 #include "Components/SphereComponent.h"
+#include "Character/MurielCharacter.h"
 
 
 
@@ -33,10 +34,12 @@ void AItem::BeginPlay()
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	const FString OtherActorName = OtherActor->GetName();
-    if (GEngine)
+
+    AMurielCharacter* Muriel = Cast<AMurielCharacter>(OtherActor);
+    if (Muriel)
     {
-        GEngine->AddOnScreenDebugMessage(1, 30.0f, FColor::Emerald, OtherActorName);
+
+        Muriel->SetOverlappingItem(this);
     }
 
 
@@ -45,10 +48,11 @@ void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 
-    const FString OtherActorName = FString("Ending Overlap with:") + OtherActor->GetName();
-    if (GEngine)
+    AMurielCharacter* Muriel = Cast<AMurielCharacter>(OtherActor);
+    if (Muriel)
     {
-        GEngine->AddOnScreenDebugMessage(1, 30.0f, FColor::Cyan, OtherActorName);
+
+        Muriel->SetOverlappingItem(nullptr);
     }
 }
 
