@@ -26,7 +26,7 @@ void UMurielAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	{
 		GroundSpeed = UKismetMathLibrary::VSizeXY(MurielCharacterMovement->Velocity);
 		IsFalling = MurielCharacterMovement->IsFalling();
-
+		CharacterState = Muriel->GetCharacterState();
 	}
 }
 
