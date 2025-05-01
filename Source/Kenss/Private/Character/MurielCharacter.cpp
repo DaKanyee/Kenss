@@ -56,6 +56,8 @@ void AMurielCharacter::BeginPlay()
 
 void AMurielCharacter::Move(const FInputActionValue& Value)
 {
+
+    if (ActionState != EActionState::EAS_Unoccupied) return;
     const FVector2D MovementVector = Value.Get<FVector2D>();
 
     const FRotator Rotation = Controller->GetControlRotation();
@@ -70,6 +72,7 @@ void AMurielCharacter::Move(const FInputActionValue& Value)
 
 void AMurielCharacter::Look(const FInputActionValue& Value)
 {
+
     const FVector2D LookAxisvector = Value.Get<FVector2D>();
 
     AddControllerPitchInput(LookAxisvector.Y);
@@ -83,6 +86,26 @@ void AMurielCharacter::EKeyPressed()
     {
         OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
         CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+        OverlappingItem = nullptr;
+		EquippedWeapon = OverlappingWeapon;
+
+    }
+
+    else
+    {
+        if (CanUnequip())
+        {
+            PlayEquipMontage(FName("UnEuip"));
+            CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_EquippingWeapon;
+        }
+        else if (CanEquip())
+        {
+            PlayEquipMontage(FName("Equip"));
+            CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+            ActionState = EActionState::EAS_EquippingWeapon;
+        }
+
 
     }
 
@@ -104,6 +127,47 @@ bool AMurielCharacter::CanAttack()
            CharacterState != ECharacterState::ECS_Unequipped;
 }
 
+
+
+bool AMurielCharacter::CanUnequip()
+{
+    return ActionState == EActionState::EAS_Unoccupied &&
+        CharacterState != ECharacterState::ECS_Unequipped;;
+}
+
+bool AMurielCharacter::CanEquip()
+{
+    return ActionState == EActionState::EAS_Unoccupied &&
+        CharacterState == ECharacterState::ECS_Unequipped &&
+        EquippedWeapon;
+}
+
+void AMurielCharacter::UnEquip()
+{
+    if (EquippedWeapon)
+    {
+        EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("Spine_Socket"));
+    }
+
+}
+
+void AMurielCharacter::Equip()
+{
+    if (EquippedWeapon)
+    {
+        EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+    }
+
+}
+
+void AMurielCharacter::FinishEquipping()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+
+}
+
+
+
 void AMurielCharacter::PlayAttackMontage()
 {
     UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -124,6 +188,18 @@ void AMurielCharacter::PlayAttackMontage()
             break;
         }
         AnimInstance->Montage_JumpToSection(SectioName, AttackMontage);
+    }
+
+}
+
+void AMurielCharacter::PlayEquipMontage(FName SectionName)
+{
+    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+    if (AnimInstance && EquipMontage)
+    {
+        AnimInstance->Montage_Play(EquipMontage);
+        AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
+
     }
 
 }

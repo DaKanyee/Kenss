@@ -17,6 +17,8 @@ class UInputAction;
 class AItem;
 class UAnimMontage;
 
+class AWeapon;
+
 UCLASS()
 class KENSS_API AMurielCharacter : public ACharacter
 {
@@ -40,6 +42,20 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 	bool CanAttack();
+
+	void PlayEquipMontage(FName SectionName);
+	bool CanUnequip();
+	bool CanEquip();
+
+
+	UFUNCTION(BlueprintCallable)
+	void UnEquip();
+
+	UFUNCTION(BlueprintCallable)
+	void Equip();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishEquipping();
 
 
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -76,6 +92,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UAnimMontage* EquipMontage;
+
+	UPROPERTY(VisibleAnywhere, category = "Weapon")
+	AWeapon* EquippedWeapon;
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }

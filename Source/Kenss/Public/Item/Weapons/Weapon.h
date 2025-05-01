@@ -18,6 +18,8 @@ public:
 
 void Equip(USceneComponent* InParent, FName InSocketName);
 
+void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
+
 
 protected:
 
