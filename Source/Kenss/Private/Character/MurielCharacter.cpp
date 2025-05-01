@@ -15,6 +15,8 @@
 #include "Item/Item.h"
 #include "Item/Weapons/Weapon.h"
 
+#include "Animation/AnimMontage.h"
+
 // Sets default values
 AMurielCharacter::AMurielCharacter()
 {
@@ -86,6 +88,30 @@ void AMurielCharacter::EKeyPressed()
 
 }
 
+void AMurielCharacter::Attack()
+{
+    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+    if (AnimInstance && AttackMontage)
+    {
+        AnimInstance->Montage_Play(AttackMontage);
+        const int32 Selection = FMath::RandRange(0, 1);
+        FName SectioName = FName();
+        switch (Selection)
+        {
+        case 0:
+            SectioName = FName("Attack1");
+            break;
+        case 1:
+            SectioName = FName("Attack2");
+            break;
+        default:
+            break;
+        }
+        AnimInstance->Montage_JumpToSection(SectioName, AttackMontage);
+    }
+
+}
+
 
 // Called every frame
 void AMurielCharacter::Tick(float DeltaTime)
@@ -106,6 +132,7 @@ void AMurielCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
         PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
         PlayerInputComponent->BindAction(FName("Equip"), IE_Pressed, this, &AMurielCharacter::EKeyPressed);
+        PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &AMurielCharacter::Attack);
     }
 
 }

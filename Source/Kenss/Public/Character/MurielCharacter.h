@@ -15,6 +15,7 @@ class UInputMappingContext;
 class UInputAction;
 
 class AItem;
+class UAnimMontage;
 
 UCLASS()
 class KENSS_API AMurielCharacter : public ACharacter
@@ -33,6 +34,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void EKeyPressed();
+	void Attack();
 
 
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -63,6 +65,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UAnimMontage* AttackMontage;
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
