@@ -35,6 +35,11 @@ protected:
 
 	void EKeyPressed();
 	void Attack();
+	void PlayAttackMontage();
+
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+	bool CanAttack();
 
 
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -56,6 +61,9 @@ public:
 private:
 
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraBoom;

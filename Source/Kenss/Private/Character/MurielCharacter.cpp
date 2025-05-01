@@ -90,6 +90,22 @@ void AMurielCharacter::EKeyPressed()
 
 void AMurielCharacter::Attack()
 {
+    if (CanAttack())
+    {
+        PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+    }
+
+}
+
+bool AMurielCharacter::CanAttack()
+{
+    return ActionState == EActionState::EAS_Unoccupied &&
+           CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+void AMurielCharacter::PlayAttackMontage()
+{
     UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
     if (AnimInstance && AttackMontage)
     {
@@ -111,6 +127,13 @@ void AMurielCharacter::Attack()
     }
 
 }
+
+void AMurielCharacter::AttackEnd()
+{
+    ActionState = EActionState::EAS_Unoccupied;
+}
+
+
 
 
 // Called every frame
