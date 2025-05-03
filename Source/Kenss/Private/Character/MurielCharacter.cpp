@@ -16,6 +16,7 @@
 #include "Item/Weapons/Weapon.h"
 
 #include "Animation/AnimMontage.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AMurielCharacter::AMurielCharacter()
@@ -234,5 +235,13 @@ void AMurielCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &AMurielCharacter::Attack);
     }
 
+}
+
+void AMurielCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
+{
+    if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+    {
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+    }
 }
 
