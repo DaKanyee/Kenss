@@ -8,6 +8,8 @@
 #include "Enemy.generated.h"
 
 class UAnimMontage;
+class UAttributeComponent;
+class UHealthBarComponent;
 
 UCLASS()
 class KENSS_API AEnemy : public ACharacter, public IHitInterface
@@ -23,6 +25,8 @@ virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 
 virtual void GetHit(const FVector& ImpactPoint) override;
 
+void DirectionalHitReact(const FVector& ImpactPoint);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,8 +35,20 @@ protected:
 
 private:
 
+	UPROPERTY(VisibleAnywhere)
+	UAttributeComponent* Attributes;
+
+	UPROPERTY(VisibleAnywhere)
+	UHealthBarComponent* HealthBarWidget;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* HitReactMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+	USoundBase* HitSound;
+
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	UParticleSystem* HitParticle;
 	
 public:
 

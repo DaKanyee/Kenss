@@ -6,6 +6,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Kenss/DebugSachen.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AttributeComponent.h"
+#include "HUD/HealthBarComponent.h"
 
 
 // Sets default values
@@ -21,12 +24,21 @@ AEnemy::AEnemy()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	
 
+	Attributes = CreateDefaultSubobject<UAttributeComponent>(TEXT("Attributes"));
+	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>(TEXT("HealthBar"));
+	HealthBarWidget->SetupAttachment(GetRootComponent());
+
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetHealthPercent(.1f);
+	}
 	
 }
 
@@ -59,9 +71,32 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
 
-	DRAW_SPHERE_COLOR(ImpactPoint,FColor::Cyan);
-	PlayHitReactMontage(FName("FormLeft"));
+	DirectionalHitReact(ImpactPoint);
 
+	if (HitSound) 
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this,
+			HitSound,
+			ImpactPoint
+			);
+	}
+
+	if (HitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticle,
+			ImpactPoint
+		);
+	}
+
+
+
+}
+
+void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
+{
 	const FVector ForWard = GetActorForwardVector();
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z);
 	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
@@ -71,11 +106,41 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 
 	Theta = FMath::RadiansToDegrees(Theta);
 
+	const FVector CorssProduct = FVector::CrossProduct(ForWard, ToHit);
+
+	if (CorssProduct.Z < 0)
+	{
+		Theta *= -1.f;
+	}
+
+	FName Section("FromBack");
+
+	if (Theta >= -45.F && Theta <45.f)
+	{
+		Section = FName("FromFront");
+	}
+	else if (Theta >= -135.f && Theta < -45.f)
+	{
+
+		Section = FName("FromLeft");
+	}
+	else if (Theta >= 45.f && Theta < 135.f)
+	{
+		Section = FName("FromRight");
+	}
+
+	PlayHitReactMontage(Section);
+
+	/*
+	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CorssProduct * 100.f, 5.f, FColor::Blue, 5.f);
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Cyan, FString::Printf(TEXT("Theta: %f"), Theta));
 	}
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ForWard * 60.f, 5.f, FColor::Blue, 5.f);
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 5.f, FColor::Green, 5.f);
+*/
+
 }
 
